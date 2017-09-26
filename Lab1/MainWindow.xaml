@@ -1,12 +1,47 @@
-﻿<Window x:Class="Lab1.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Lab1"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+﻿<Window
+    x:Class="Lab1.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Lab1.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Lab1"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Lab1.ViewModel"
+    Title="MainWindow"
+    Width="672"
+    Height="350"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+    <Border
+        Background="Transparent"
+        BorderBrush="LightGray"
+        BorderThickness="0,1,0,0">
+        <Grid Name="layout">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" MinWidth="144" />
+                <ColumnDefinition Width="3*" MinWidth="288" />
+            </Grid.ColumnDefinitions>
+            <GridSplitter
+                x:Name="gridSplitter"
+                Grid.Column="0"
+                Width="2"
+                Height="auto"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Background="DarkGray" />
+            <controls:CoordGridCanvas
+                x:Name="Canvas"
+                Grid.Column="1"
+                Margin="5,5" />
+            <ListView
+                Grid.Column="0"
+                Width="{Binding ElementName=layout, Path=ColumnDefinitions[0].ActualWidth}"
+                Height="200"
+                Margin="0,96"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top" />
+        </Grid>
+    </Border>
 </Window>
