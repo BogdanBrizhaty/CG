@@ -23,6 +23,7 @@ namespace Lab1.Controls
     {
         private Rect _canvasViewport = new Rect(new Point(-12 - 500, -12 - 500), new Size(25, 25));
         private Rect _brushGeometry = new Rect(new Point(0, 0), new Size(25, 25));
+        private int _yTextBlockPosition = 0;
 
         public Rect CanvasViewPort
         {
@@ -44,60 +45,68 @@ namespace Lab1.Controls
             }
         }
 
-
         //private int _scale = new Binding
         public CoordGridCanvas()
         {
             InitializeComponent();
-
-            Centre(new Size(canvas.Height, canvas.Width));
-
-
+            Centre(new Size(this.Height, this.Width));
 
             int newSize = (int)(CellSize * CurrentScale);
             CanvasViewPort = new Rect(
                 new Point(-1 * (newSize / 2), -1 * (newSize / 2)),
                 new Size(newSize, newSize));
             BrushGeometry = new Rect(new Point(0, 0), new Size(newSize, newSize));
-
+            Figures = new List<Model.Figure>();
+            Figures.Add(new Model.Figure()
+            {
+                X = 10, Y = 10,
+                Rect = new Rectangle()
+                {
+                    Height = 10,
+                    Width = 10,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1
+                },
+                Ellipse = new Ellipse()
+                {
+                    Width = 15,
+                    Height = 15,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1
+                }
+            });
         }
         public void Centre(Size e)
         {
             // new code
-            CoordCentre = new Point((int)(this.ActualWidth / 2), (int)(this.ActualHeight / 2));
+            CoordCentre = new Point((int)(e.Width / 2), (int)(e.Height / 2));
+            yTextBlockPosition = (int)CoordCentre.X - 10;
 
-            var cWidth = (CellSize * (int)(this.ActualWidth / CellSize)) / 2;
-            var cHeight = (CellSize * (int)(e.Height / CellSize)) / 2;
-            var widthOffset = (int)(this.ActualWidth / 2) - cWidth;
-            var heightOffset = (int)(this.ActualHeight / 2) - cHeight;
-
-            if (cWidth % CellSize == 0)
-                widthOffset += 25;
-            if (cHeight % CellSize == 0)
-                heightOffset += 25;
             int newSize = (int)(CellSize * CurrentScale);
+
+            var cWidth = (newSize * (int)(e.Width / newSize)) / 2;
+            var cHeight = (newSize * (int)(e.Height / newSize)) / 2;
+            var widthOffset = (int)(e.Width / 2) - cWidth;
+            var heightOffset = (int)(e.Height / 2) - cHeight;
+
+            if (cWidth % newSize == 0)
+                widthOffset += newSize / 2;
+            if (cHeight % newSize == 0)
+                heightOffset += newSize / 2;
             CanvasViewPort = new Rect(
-                new Point(-1 * (newSize / 2) + widthOffset, -1 * (newSize / 2) + heightOffset),
+                new Point(-1 * (newSize / 2) + widthOffset,
+                    - 1 * (newSize / 2) + heightOffset),
                 new Size(newSize, newSize));
             BrushGeometry = new Rect(new Point(0, 0), new Size(newSize, newSize));
-
-            // old code
-            //var cellSize = (int)(CellSize * CurrentScale);
-
-            //var cWidth = (cellSize * (int)(e.Width / cellSize)) / 2;
-            //var cHeight = (cellSize * (int)(e.Height / cellSize)) / 2;
-
-            ////Console.WriteLine(cWidth + "    " + cHeight);
-            //if (cWidth % cellSize != 0)
-            //    CoordCentre = new Point(cWidth, CoordCentre.Y);
-            //else 
-            //    CoordCentre = new Point(cWidth - (int)(cellSize / 2), CoordCentre.Y);
-            //if (cHeight % cellSize != 0)
-            //    CoordCentre = new Point(CoordCentre.X, cHeight);
-            //else
-            //    CoordCentre = new Point(CoordCentre.X, cHeight - (int)(cellSize / 2));
-            //if (cWidth % cellSize != 0 && cHeight % cellSize != 0)
-            //    CoordCentre = new Point(cWidth, cHeight);
+        }
+        public int yTextBlockPosition
+        {
+            get { return _yTextBlockPosition; }
+            set
+            {
+                _yTextBlockPosition = value;
+                OnPropertyChanged("yTextBlockPosition");
+            }
         }
         //public Point CoordCentre { get; set; }
         public Point CoordCentre
@@ -105,7 +114,6 @@ namespace Lab1.Controls
             get { return (Point)this.GetValue(CoordCentreProperty); }
             set
             {
-                //Console.WriteLine(CoordCentre.ToString());
                 var oldValue = CoordCentre;
                 this.SetValue(CoordCentreProperty, value);
                 OnPropertyChanged(new DependencyPropertyChangedEventArgs(CoordCentreProperty, oldValue, value));
@@ -115,6 +123,8 @@ namespace Lab1.Controls
           "CoordCentre", typeof(Point), typeof(CoordGridCanvas),
           new PropertyMetadata(new Point(0, 0)));
 
+        public int CanvasToGridPointsRatio { get { return 10; } }
+
         public decimal CurrentScale
         {
             get { return (decimal)this.GetValue(CurrentScaleProperty); }
@@ -123,6 +133,15 @@ namespace Lab1.Controls
         public static readonly DependencyProperty CurrentScaleProperty = DependencyProperty.Register(
           "CurrentScale", typeof(decimal), typeof(CoordGridCanvas),
           new PropertyMetadata(1.00M, new PropertyChangedCallback(OnScaleChanged)));
+
+        public IList<Model.Figure> Figures
+        {
+            get { return (IList<Model.Figure>)this.GetValue(FiguresProperty); }
+            set { this.SetValue(FiguresProperty, value); }
+        }
+        public static readonly DependencyProperty FiguresProperty = DependencyProperty.Register(
+          "Figures", typeof(IList<Model.Figure>), typeof(CoordGridCanvas),
+          new PropertyMetadata(null, new PropertyChangedCallback(OnFiguresCollectionChanged)));
 
         public int CellSize
         {
@@ -137,23 +156,30 @@ namespace Lab1.Controls
 
         public void Scale(decimal scale)
         {
-            int newSize = (int)(CellSize * scale);
-
-            CanvasViewPort = new Rect(
-                new Point(-1 * (newSize / 2), -1 * (newSize / 2)),
-                new Size(newSize, newSize));
-            BrushGeometry = new Rect(new Point(0, 0), new Size(newSize, newSize));
             Centre(new Size(this.ActualWidth, this.ActualHeight));
         }
 
-        public void Transform()
+        public void Transform(Size newSize, Size oldSize)
         {
-            throw new NotImplementedException();
+
+            foreach (UIElement item in canvas.Children)
+            {
+                var figure = Figures.Where(f => f.Rect == item || f.Ellipse == item).FirstOrDefault();
+                if (figure == null)
+                    continue;
+                if (typeof(Rectangle) == item.GetType())
+                    Canvas.SetTop(item, CoordCentre.Y - figure.Y - figure.Rect.Height);
+                if (typeof(Ellipse) == item.GetType())
+                    Canvas.SetTop(item, CoordCentre.Y - figure.Y - figure.Ellipse.Height);
+                Canvas.SetLeft(item, CoordCentre.X + figure.X);
+            }
+
         }
 
         public void canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             Centre(e.NewSize);
+            Transform(e.NewSize, e.PreviousSize);
         }
         protected void OnPropertyChanged(string propertyName)
         {
@@ -162,6 +188,29 @@ namespace Lab1.Controls
         public static void OnScaleChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             (sender as CoordGridCanvas)?.Scale((decimal)e.NewValue);
+        }
+        void PaintFigure(Model.Figure f)
+        {
+            if (f == null)
+                return;
+
+            Canvas.SetTop(f.Rect, CoordCentre.Y - f.Y - f.Rect.Height);
+            Canvas.SetLeft(f.Rect, CoordCentre.X + f.X);
+            canvas.Children.Add(f.Rect);
+
+            Canvas.SetTop(f.Ellipse, CoordCentre.Y - f.Y - f.Ellipse.Height);
+            Canvas.SetLeft(f.Ellipse, CoordCentre.X + f.X);
+            canvas.Children.Add(f.Ellipse);
+        }
+        public static void OnFiguresCollectionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var last = (e.NewValue as List<Model.Figure>).LastOrDefault();
+            (sender as CoordGridCanvas)?.PaintFigure(last);
+        }
+
+        private void ctrl1_Loaded(object sender, RoutedEventArgs e)
+        {
+            PaintFigure(Figures.LastOrDefault());
         }
     }
 }
