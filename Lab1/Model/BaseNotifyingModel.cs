@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lab1.Model
 {
-    class BaseNotifyingModel : INotifyPropertyChanged
+    public class BaseNotifyingModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
