@@ -5,19 +5,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Lab1.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="ctrl1"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <Canvas>
+    <Canvas Name="canvas" SizeChanged="canvas_SizeChanged">
         <Canvas.Background>
             <DrawingBrush
                 TileMode="Tile"
-                Viewport="{Binding CanvasViewPort}"
+                Viewport="{Binding ElementName=ctrl1, Path=CanvasViewPort}"
                 ViewportUnits="Absolute">
                 <DrawingBrush.Drawing>
                     <GeometryDrawing>
                         <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,0,50,50" />
+                            <RectangleGeometry Rect="{Binding ElementName=ctrl1, Path=BrushGeometry}" />
                         </GeometryDrawing.Geometry>
                         <!--<GeometryDrawing.Brush>
                                     <SolidColorBrush Opacity="0.25" Color="Aqua" />
@@ -29,11 +30,25 @@
                 </DrawingBrush.Drawing>
             </DrawingBrush>
         </Canvas.Background>
+        <Line
+            Stroke="Black"
+            StrokeThickness="1"
+            X1="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
+            X2="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
+            Y1="0"
+            Y2="{Binding ElementName=canvas, Path=ActualHeight}" />
+        <Line
+            Stroke="Black"
+            StrokeThickness="1"
+            X1="0"
+            X2="{Binding ElementName=canvas, Path=ActualWidth}"
+            Y1="{Binding ElementName=ctrl1, Path=CoordCentre.Y, UpdateSourceTrigger=PropertyChanged}"
+            Y2="{Binding ElementName=ctrl1, Path=CoordCentre.Y, UpdateSourceTrigger=PropertyChanged}" />
         <Rectangle
-                    Width="50"
-                    Canvas.Left="25"
-                    Canvas.Top="25"
-                    Height="50"
-                    Stroke="Black" />
+            Canvas.Left="25"
+            Canvas.Top="25"
+            Width="50"
+            Height="50"
+            Stroke="Black" />
     </Canvas>
 </UserControl>
