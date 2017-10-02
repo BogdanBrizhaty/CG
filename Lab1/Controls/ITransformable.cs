@@ -8,7 +8,6 @@ namespace Lab1.Controls
 {
     public interface ITransformable
     {
-        void Centre();
         void Transform();
     }
 }

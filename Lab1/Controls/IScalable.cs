@@ -8,6 +8,6 @@ namespace Lab1.Controls
 {
     public interface IScalable
     {
-        void Scale(int scale);
+        void Scale(decimal scale);
     }
 }

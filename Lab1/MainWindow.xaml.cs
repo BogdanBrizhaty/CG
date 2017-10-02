@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lab1.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,15 @@ namespace Lab1
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            //Console.WriteLine("window");
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
         }
     }
 }
