@@ -7,8 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="ctrl1"
     d:DesignHeight="300"
+    Loaded="ctrl1_Loaded"
     d:DesignWidth="300"
     mc:Ignorable="d">
+
     <Canvas Name="canvas" SizeChanged="canvas_SizeChanged">
         <Canvas.Background>
             <DrawingBrush
@@ -30,6 +32,14 @@
                 </DrawingBrush.Drawing>
             </DrawingBrush>
         </Canvas.Background>
+        <TextBlock
+            Canvas.Top="{Binding ElementName=ctrl1, Path=CoordCentre.Y}"
+            Canvas.Right="10"
+            Text="X" />
+        <TextBlock
+            Canvas.Left="{Binding ElementName=ctrl1, Path=yTextBlockPosition}"
+            Canvas.Top="10"
+            Text="Y" />
         <Line
             Stroke="Black"
             StrokeThickness="1"
@@ -44,11 +54,12 @@
             X2="{Binding ElementName=canvas, Path=ActualWidth}"
             Y1="{Binding ElementName=ctrl1, Path=CoordCentre.Y, UpdateSourceTrigger=PropertyChanged}"
             Y2="{Binding ElementName=ctrl1, Path=CoordCentre.Y, UpdateSourceTrigger=PropertyChanged}" />
-        <Rectangle
+        <!--<Rectangle
             Canvas.Left="25"
             Canvas.Top="25"
             Width="50"
             Height="50"
-            Stroke="Black" />
+            Stroke="Black" />-->
     </Canvas>
+
 </UserControl>
