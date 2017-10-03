@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -21,7 +23,7 @@ namespace Lab1.Controls
     /// </summary>
     public partial class CoordGridCanvas : UserControl, ITransformable, IScalable, INotifyPropertyChanged
     {
-        private Rect _canvasViewport = new Rect(new Point(-12 - 500, -12 - 500), new Size(25, 25));
+        private Rect _canvasViewport = new Rect(new Point(-12, -12), new Size(25, 25));
         private Rect _brushGeometry = new Rect(new Point(0, 0), new Size(25, 25));
         private int _yTextBlockPosition = 0;
 
@@ -56,25 +58,25 @@ namespace Lab1.Controls
                 new Point(-1 * (newSize / 2), -1 * (newSize / 2)),
                 new Size(newSize, newSize));
             BrushGeometry = new Rect(new Point(0, 0), new Size(newSize, newSize));
-            Figures = new List<Model.Figure>();
-            Figures.Add(new Model.Figure()
-            {
-                X = 10, Y = 10,
-                Rect = new Rectangle()
-                {
-                    Height = 10,
-                    Width = 10,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1
-                },
-                Ellipse = new Ellipse()
-                {
-                    Width = 15,
-                    Height = 15,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1
-                }
-            });
+            //Figures = new List<Model.Figure>();
+            //Figures.Add(new Model.Figure()
+            //{
+            //    X = 10, Y = 10,
+            //    Rect = new Rectangle()
+            //    {
+            //        Height = 10,
+            //        Width = 10,
+            //        Stroke = Brushes.Black,
+            //        StrokeThickness = 1
+            //    },
+            //    Ellipse = new Ellipse()
+            //    {
+            //        Width = 15,
+            //        Height = 15,
+            //        Stroke = Brushes.Black,
+            //        StrokeThickness = 1
+            //    }
+            //});
         }
         public void Centre(Size e)
         {
@@ -123,7 +125,13 @@ namespace Lab1.Controls
           "CoordCentre", typeof(Point), typeof(CoordGridCanvas),
           new PropertyMetadata(new Point(0, 0)));
 
-        public int CanvasToGridPointsRatio { get { return 10; } }
+        private int _defaultRatio = 10;
+        private int _ratio = 10;
+        public int CanvasToGridPointsRatio
+        {
+            get { return _ratio; }
+            set { _ratio = value; }
+        }
 
         public decimal CurrentScale
         {
@@ -134,14 +142,14 @@ namespace Lab1.Controls
           "CurrentScale", typeof(decimal), typeof(CoordGridCanvas),
           new PropertyMetadata(1.00M, new PropertyChangedCallback(OnScaleChanged)));
 
-        public IList<Model.Figure> Figures
+        public ObservableCollection<Model.Figure> Figures
         {
-            get { return (IList<Model.Figure>)this.GetValue(FiguresProperty); }
+            get { return (ObservableCollection<Model.Figure>)this.GetValue(FiguresProperty); }
             set { this.SetValue(FiguresProperty, value); }
         }
         public static readonly DependencyProperty FiguresProperty = DependencyProperty.Register(
-          "Figures", typeof(IList<Model.Figure>), typeof(CoordGridCanvas),
-          new PropertyMetadata(null, new PropertyChangedCallback(OnFiguresCollectionChanged)));
+          "Figures", typeof(ObservableCollection<Model.Figure>), typeof(CoordGridCanvas),
+          new PropertyMetadata(null/*, new PropertyChangedCallback(OnFiguresCollectionChanged)*/));
 
         public int CellSize
         {
@@ -157,10 +165,9 @@ namespace Lab1.Controls
         public void Scale(decimal scale)
         {
             Centre(new Size(this.ActualWidth, this.ActualHeight));
-        }
 
-        public void Transform(Size newSize, Size oldSize)
-        {
+            if (Figures == null)
+                return;
 
             foreach (UIElement item in canvas.Children)
             {
@@ -168,12 +175,35 @@ namespace Lab1.Controls
                 if (figure == null)
                     continue;
                 if (typeof(Rectangle) == item.GetType())
-                    Canvas.SetTop(item, CoordCentre.Y - figure.Y - figure.Rect.Height);
+                {
+                    (item as Rectangle).Width = (int)((decimal)figure.DefaultSize.Width * CanvasToGridPointsRatio * CurrentScale);
+                    (item as Rectangle).Height = (int)((decimal)figure.DefaultSize.Height * CanvasToGridPointsRatio * CurrentScale);
+                }
                 if (typeof(Ellipse) == item.GetType())
-                    Canvas.SetTop(item, CoordCentre.Y - figure.Y - figure.Ellipse.Height);
-                Canvas.SetLeft(item, CoordCentre.X + figure.X);
-            }
+                {
+                    // move ellipse
+                    (item as Ellipse).Width = (int)((decimal)figure.DefaultSize.Width * CanvasToGridPointsRatio * CurrentScale);
+                    (item as Ellipse).Height = (int)((decimal)figure.DefaultSize.Height * CanvasToGridPointsRatio * CurrentScale);
+                }
 
+                Canvas.SetTop(item, CoordCentre.Y - CanvasToGridPointsRatio * (double)(figure.Y * CurrentScale));
+                Canvas.SetLeft(item, CoordCentre.X + CanvasToGridPointsRatio * (double)(figure.X * CurrentScale));
+            }
+        }
+
+        public void Transform(Size newSize, Size oldSize)
+        {
+            if (Figures == null || Figures.Count == 0)
+                return;
+
+            foreach (UIElement item in canvas.Children)
+            {
+                var figure = Figures.Where(f => f.Rect == item || f.Ellipse == item).FirstOrDefault();
+                if (figure == null)
+                    continue;
+                Canvas.SetTop(item, CoordCentre.Y - CanvasToGridPointsRatio * (double)(figure.Y * CurrentScale) /*(CoordCentre.Y - CanvasToGridPointsRatio * (figure.Y) - figure.Rect.Height)*/);
+                Canvas.SetLeft(item, CoordCentre.X + CanvasToGridPointsRatio * (double)(figure.X * CurrentScale));
+            }
         }
 
         public void canvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -193,24 +223,34 @@ namespace Lab1.Controls
         {
             if (f == null)
                 return;
-
-            Canvas.SetTop(f.Rect, CoordCentre.Y - f.Y - f.Rect.Height);
-            Canvas.SetLeft(f.Rect, CoordCentre.X + f.X);
+            f.Rect.Height *= CanvasToGridPointsRatio;
+            f.Rect.Width *= CanvasToGridPointsRatio;
+            Canvas.SetTop(f.Rect, CoordCentre.Y - CanvasToGridPointsRatio * (f.Y));
+            Canvas.SetLeft(f.Rect, (CoordCentre.X + CanvasToGridPointsRatio * f.X));
             canvas.Children.Add(f.Rect);
 
-            Canvas.SetTop(f.Ellipse, CoordCentre.Y - f.Y - f.Ellipse.Height);
-            Canvas.SetLeft(f.Ellipse, CoordCentre.X + f.X);
+            f.Ellipse.Height *= CanvasToGridPointsRatio;
+            f.Ellipse.Width *= CanvasToGridPointsRatio;
+            Canvas.SetTop(f.Ellipse, CoordCentre.Y - CanvasToGridPointsRatio * (int)(f.Y * CurrentScale));
+            Canvas.SetLeft(f.Ellipse, CoordCentre.X + CanvasToGridPointsRatio * (int)(f.X * CurrentScale));
             canvas.Children.Add(f.Ellipse);
-        }
-        public static void OnFiguresCollectionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            var last = (e.NewValue as List<Model.Figure>).LastOrDefault();
-            (sender as CoordGridCanvas)?.PaintFigure(last);
         }
 
         private void ctrl1_Loaded(object sender, RoutedEventArgs e)
         {
-            PaintFigure(Figures.LastOrDefault());
+            //PaintFigure(Figures.LastOrDefault());
+        }
+        public void AddFigure(Model.Figure f)
+        {
+            if (f == null)
+                throw new ArgumentNullException();
+
+            if (Figures == null)
+                Figures = new ObservableCollection<Model.Figure>();
+            // blah blah
+            Figures.Add(f);
+            PaintFigure(f);
+            // paint
         }
     }
 }
