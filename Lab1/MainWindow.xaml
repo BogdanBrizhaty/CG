@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:Lab1"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Lab1.ViewModel"
+    x:Name="MainWindow1"
     Title="MainWindow"
     Width="672"
     Height="480"
@@ -14,16 +15,22 @@
     StateChanged="Window_StateChanged"
     mc:Ignorable="d">
     <Window.DataContext>
-        <vm:MainViewModel />
+        <vm:MainViewModel x:Name="dc" />
     </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary Source="Styles.xaml" />
+    </Window.Resources>
     <Border
         Background="Transparent"
         BorderBrush="LightGray"
         BorderThickness="0,1,0,0">
         <Grid Name="layout">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" MinWidth="144" />
-                <ColumnDefinition Width="3*" MinWidth="288" />
+                <ColumnDefinition
+                    Name="optionsColumn"
+                    Width="202"
+                    MinWidth="202" />
+                <ColumnDefinition Width="1*" MinWidth="288" />
             </Grid.ColumnDefinitions>
             <GridSplitter
                 x:Name="gridSplitter"
@@ -38,14 +45,18 @@
                 Grid.Column="1"
                 Margin="5,5"
                 CellSize="{Binding CellSize}"
-                CurrentScale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                CurrentScale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Figures="{Binding Path=Figures, Mode=TwoWay}" />
             <ListView
+                x:Name="figuresListing"
                 Grid.Column="0"
-                Width="{Binding ElementName=layout, Path=ColumnDefinitions[0].ActualWidth}"
-                Height="120"
-                Margin="0,192"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top" />
+                Margin="0,268,2,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                ItemContainerStyle="{StaticResource ResourceKey=CustomListViewItem}"
+                ItemsSource="{Binding Path=Figures, Mode=TwoWay}"
+                SelectedItem="{Binding SelectedFigure}"
+                SelectionMode="Single" />
             <TextBlock
                 x:Name="textBlock"
                 Grid.Column="0"
@@ -72,13 +83,176 @@
                 Content="auto" />
             <controls:NumericUpDown
                 Grid.Column="0"
-                Margin="10,55,24,359"
+                Margin="10,55"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 HighestValue="5.0"
                 LowestValue="0.0001"
                 Step="{Binding ScalingStep}"
                 Value="{Binding Scale, Mode=TwoWay}" />
+            <TextBlock
+                x:Name="textBlock1"
+                Margin="11,110,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="Canvas to grid ratio"
+                TextWrapping="Wrap" />
+            <Button
+                x:Name="button"
+                Width="50"
+                Margin="11,243,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding AddFigureCommand}"
+                CommandParameter="{Binding .}"
+                Content="Add" />
+            <Button
+                x:Name="DelBtn"
+                Width="50"
+                Margin="131,243,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding RemoveFigureCommand}"
+                CommandParameter="{Binding .}"
+                Content="Del" />
+            <TextBox
+                x:Name="textBox"
+                Width="36"
+                Height="23"
+                Margin="37,132,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="{Binding X1, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap" />
+            <TextBox
+                x:Name="textBox_Copy"
+                Width="36"
+                Height="23"
+                Margin="113,132,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="{Binding Y1, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap" />
+            <TextBox
+                x:Name="textBox_Copy1"
+                Width="36"
+                Height="23"
+                Margin="37,160,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="{Binding X2, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap" />
+            <TextBox
+                x:Name="textBox_Copy2"
+                Width="36"
+                Height="23"
+                Margin="113,160,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="{Binding Y2, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="textBlock2"
+                Margin="17,137,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="X1"
+                TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="textBlock2_Copy"
+                Margin="17,163,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="X1"
+                TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="textBlock2_Copy1"
+                Margin="93,163,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="Y2"
+                TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="textBlock2_Copy2"
+                Margin="93,138,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="Y1"
+                TextWrapping="Wrap" />
+            <ComboBox
+                x:Name="comboBox"
+                Width="83"
+                Margin="10,212,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                ItemContainerStyle="{StaticResource ResourceKey=CustomBrushComboBoxItem}"
+                ItemsSource="{Binding Brushes}"
+                SelectedItem="{Binding SelectedRectColor}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                            <Grid
+                                Width="18"
+                                Height="18"
+                                Background="{Binding Color}" />
+                            <TextBlock Text="  " />
+                            <TextBlock Text="{Binding Caption}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ComboBox
+                x:Name="comboBox_Copy"
+                Width="83"
+                Margin="102,212,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                ItemContainerStyle="{StaticResource ResourceKey=CustomBrushComboBoxItem}"
+                ItemsSource="{Binding Brushes}"
+                SelectedItem="{Binding SelectedEllipseColor}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                            <Grid
+                                Width="18"
+                                Height="18"
+                                Background="{Binding Color}" />
+                            <TextBlock Text="  " />
+                            <TextBlock Text="{Binding Caption}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock
+                x:Name="textBlock3"
+                Margin="12,191,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="Rect color"
+                TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="textBlock3_Copy"
+                Margin="106,191,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="CircleColor"
+                TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="textBlock1_Copy"
+                Margin="123,111,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Text="10"
+                TextWrapping="Wrap" />
+            <Button
+                x:Name="button1"
+                Width="60"
+                Margin="66,243,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding EditColorCommand}"
+                CommandParameter="{Binding .}"
+                Content="Edit" />
         </Grid>
     </Border>
 </Window>
