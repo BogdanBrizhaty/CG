@@ -11,7 +11,7 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
 
-    <Canvas Name="canvas" SizeChanged="canvas_SizeChanged">
+    <Canvas Name="canvas" SizeChanged="canvas_SizeChanged" MouseWheel="canvas_MouseWheel">
         <Canvas.Background>
             <DrawingBrush
                 TileMode="Tile"
