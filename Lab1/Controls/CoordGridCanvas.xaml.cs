@@ -263,7 +263,6 @@ namespace Lab1.Controls
                 Console.WriteLine(old.Any());
                 Console.WriteLine(e.NewValue.GetType());
             }
-            //Console.WriteLine("changed col");
             var action = new NotifyCollectionChangedEventHandler(
                     (o, args) =>
                     {
@@ -274,10 +273,12 @@ namespace Lab1.Controls
                             var arg = args as NotifyCollectionChangedEventArgs;
                             if (arg.NewItems != null && arg.NewItems.Count > 0)
                                 grid.PaintFigure(arg.NewItems[0] as Model.Figure);
-                            //grid.figuresListing.ItemsSource
-                            //ItemContainerStyle="{StaticResource ResourceKey=CustomListViewItem}"
-                            //grid.L
-                            //grid.Figures
+                            if (arg.Action == NotifyCollectionChangedAction.Remove)
+                            {
+                                var removable = (arg.OldItems[0] as Model.Figure);
+                                grid.canvas.Children.Remove(removable.Rect);
+                                grid.canvas.Children.Remove(removable.Ellipse);
+                            }
                         }
                     });
 
@@ -292,6 +293,14 @@ namespace Lab1.Controls
                 var coll = (ObservableCollection<Model.Figure>)e.NewValue;
                 coll.CollectionChanged += action;
             }
+        }
+
+        private void canvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+                CurrentScale += (CurrentScale + 0.10M <= 2.50M) ? 0.10M : 0;
+            if (e.Delta < 0)
+                CurrentScale -= (CurrentScale - 0.10M > 0) ? 0.10M : 0;
         }
     }
 }

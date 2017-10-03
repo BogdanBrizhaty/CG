@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Lab1.ViewModel
 {
@@ -21,17 +22,98 @@ namespace Lab1.ViewModel
         private decimal _scale = 1.00M;
         private bool _autoScaling = true;
         private ObservableCollection<Model.Figure> _figures;
+        private int _x1, _x2, _y1, _y2;
 
+        private Model.Figure _selectedFigure = null;
+        public Model.Figure SelectedFigure
+        {
+            get { return _selectedFigure; }
+            set
+            {
+                _selectedFigure = value;
+                //Console.WriteLine("selected: " + value.X);
+                OnPropertyChanged("SelectedFigure");
+            }
+        }
+        public int X1
+        {
+            get { return _x1; }
+            set
+            {
+                _x1 = value;
+                OnPropertyChanged("X1");
+            }
+        }
+        public List<BrushInfo> Brushes { get; private set; }
+        public int X2
+        {
+            get { return _x2; }
+            set
+            {
+                _x2 = value;
+                OnPropertyChanged("X2");
+            }
+        }
+        public int Y1
+        {
+            get { return _y1; }
+            set
+            {
+                _y1 = value;
+                OnPropertyChanged("Y1");
+            }
+        }
+        public int Y2
+        {
+            get { return _y2; }
+            set
+            {
+                _y2 = value;
+                OnPropertyChanged("Y2");
+            }
+        }
+        private BrushInfo _selectedRectColor;
+        private BrushInfo _selectedEllipseColor;
 
+        public BrushInfo SelectedRectColor
+        {
+            get { return _selectedRectColor; }
+            set
+            {
+                _selectedRectColor = value;
+                OnPropertyChanged("SelectedRectColor");
+            }
+        }
+        public BrushInfo SelectedEllipseColor
+        {
+            get { return _selectedEllipseColor; }
+            set
+            {
+                _selectedEllipseColor = value;
+                OnPropertyChanged("SelectedEllipseColor");
+            }
+        }
         //COMMANDS
         //private ICommand _increaseScaleButtonPressedCommand;
         #endregion
 
         public MainViewModel()
         {
+            Brushes = new List<BrushInfo>()
+            {
+                new BrushInfo("Black", System.Windows.Media.Brushes.Black),
+                new BrushInfo("Red", System.Windows.Media.Brushes.Red),
+                new BrushInfo("Blue", System.Windows.Media.Brushes.Blue),
+                new BrushInfo("Green", System.Windows.Media.Brushes.Green),
+                new BrushInfo("Yellow", System.Windows.Media.Brushes.Yellow),
+                new BrushInfo("DarkGray", System.Windows.Media.Brushes.DarkGray),
+            };
+            SelectedRectColor = Brushes.First();
+            SelectedEllipseColor = Brushes.First();
             int newSize = (int)(_defaultSize * _scale);
             Figures = new ObservableCollection<Figure>();
             InitializeCommands();
+
         }
 
         public ObservableCollection<Model.Figure> Figures
@@ -96,14 +178,16 @@ namespace Lab1.ViewModel
 
         // COMMANDS
         public ICommand AddFigureCommand { get; private set; }
-        //public ICommand DecreaseScaleButtonPressedCommand { get; private set; }
+        public ICommand RemoveFigureCommand { get; private set; }
+        public ICommand EditColorCommand { get; private set; }
         #endregion
 
         #region command initializer
         void InitializeCommands()
         {
             AddFigureCommand = new AddFigureCommand();
-            //DecreaseScaleButtonPressedCommand = new DecScaleCommand();
+            RemoveFigureCommand = new RemoveFigureCommand();
+            EditColorCommand = new EditColorCommand();
         }
         #endregion
     }
