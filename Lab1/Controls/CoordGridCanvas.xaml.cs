@@ -149,7 +149,7 @@ namespace Lab1.Controls
         }
         public static readonly DependencyProperty FiguresProperty = DependencyProperty.Register(
           "Figures", typeof(ObservableCollection<Model.Figure>), typeof(CoordGridCanvas),
-          new PropertyMetadata(null/*, new PropertyChangedCallback(OnFiguresCollectionChanged)*/));
+          new PropertyMetadata(null, new PropertyChangedCallback(OnFiguresCollectionChanged)));
 
         public int CellSize
         {
@@ -251,6 +251,47 @@ namespace Lab1.Controls
             Figures.Add(f);
             PaintFigure(f);
             // paint
+        }
+
+        private static void OnFiguresCollectionChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue != null)
+            {
+                var @new = e.NewValue as ObservableCollection<Model.Figure>;
+                
+                var old = e.NewValue as ObservableCollection<Model.Figure>;
+                Console.WriteLine(old.Any());
+                Console.WriteLine(e.NewValue.GetType());
+            }
+            //Console.WriteLine("changed col");
+            var action = new NotifyCollectionChangedEventHandler(
+                    (o, args) =>
+                    {
+                        var grid = obj as CoordGridCanvas;
+
+                        if (grid != null)
+                        {
+                            var arg = args as NotifyCollectionChangedEventArgs;
+                            if (arg.NewItems != null && arg.NewItems.Count > 0)
+                                grid.PaintFigure(arg.NewItems[0] as Model.Figure);
+                            //grid.figuresListing.ItemsSource
+                            //ItemContainerStyle="{StaticResource ResourceKey=CustomListViewItem}"
+                            //grid.L
+                            //grid.Figures
+                        }
+                    });
+
+            if (e.OldValue != null)
+            {
+                var coll = (INotifyCollectionChanged)e.OldValue;
+                coll.CollectionChanged -= action;
+            }
+
+            if (e.NewValue != null)
+            {
+                var coll = (ObservableCollection<Model.Figure>)e.NewValue;
+                coll.CollectionChanged += action;
+            }
         }
     }
 }
