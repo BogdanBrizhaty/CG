@@ -50,6 +50,7 @@ namespace Lab1.ViewModel.Commands
                     Height = dist,
                     Width = dist,
                     Stroke = vm.SelectedRectColor.Color,
+                    Fill = vm.SelectedRectColor.Color,
                     StrokeThickness = 2
                 },
                 Ellipse = new Ellipse()
@@ -57,13 +58,14 @@ namespace Lab1.ViewModel.Commands
                     Width = dist,
                     Height = dist,
                     Stroke = vm.SelectedEllipseColor.Color,
+                    Fill = vm.SelectedEllipseColor.Color,
                     StrokeThickness = 2
                 },
                 DefaultSize = new Size(dist, dist)
             };
-            if (axleOffset > 0)
+            if (axleOffset > 0 && angle != 45)
                 figure.Y += (int)axleOffset;
-            if (axleOffset < 0)
+            if (axleOffset < 0 && angle != 45)
                 figure.X += (int)axleOffset;
 
             Console.WriteLine(figure.X + " ; " + figure.Y);

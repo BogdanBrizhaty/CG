@@ -23,6 +23,8 @@ namespace Lab1.ViewModel.Commands
             {
                 vm.SelectedFigure.Rect.Stroke = vm.SelectedRectColor.Color;
                 vm.SelectedFigure.Ellipse.Stroke = vm.SelectedEllipseColor.Color;
+                vm.SelectedFigure.Rect.Fill = vm.SelectedRectColor.Color;
+                vm.SelectedFigure.Ellipse.Fill = vm.SelectedEllipseColor.Color;
             }
         }
     }
