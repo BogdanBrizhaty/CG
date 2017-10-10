@@ -27,6 +27,57 @@ namespace Lab1.Controls
         private Rect _brushGeometry = new Rect(new Point(0, 0), new Size(25, 25));
         private int _yTextBlockPosition = 0;
 
+        private int _yArrowLeftLine = 0;
+        private int _yArrowRightLine = 0;
+        private int _xArrowLeftPosLine = 0;
+        private int _xArrowTopLine = 0;
+        private int _xArrowBottomLine = 0;
+
+        public int XArrowLeftPosLine
+        {
+            get { return _xArrowLeftPosLine; }
+            set
+            {
+                _xArrowLeftPosLine = value;
+                OnPropertyChanged("xArrowLeftPosLine");
+            }
+        }
+        public int XArrowTopLine
+        {
+            get { return _xArrowTopLine; }
+            set
+            {
+                _xArrowTopLine = value;
+                OnPropertyChanged("xArrowTopLine");
+            }
+        }
+        public int XArrowBottomLine
+        {
+            get { return _xArrowBottomLine; }
+            set
+            {
+                _xArrowBottomLine = value;
+                OnPropertyChanged("xArrowBottomLine");
+            }
+        }
+        public int YArrowLeftLine
+        {
+            get { return _yArrowLeftLine; }
+            set
+            {
+                _yArrowLeftLine = value;
+                OnPropertyChanged("YArrowLeftLine");
+            }
+        }
+        public int YArrowRightLine
+        {
+            get { return _yArrowRightLine; }
+            set
+            {
+                _yArrowRightLine = value;
+                OnPropertyChanged("YArrowRightLine");
+            }
+        }
         public Rect CanvasViewPort
         {
             get { return _canvasViewport; }
@@ -58,31 +109,139 @@ namespace Lab1.Controls
                 new Point(-1 * (newSize / 2), -1 * (newSize / 2)),
                 new Size(newSize, newSize));
             BrushGeometry = new Rect(new Point(0, 0), new Size(newSize, newSize));
-            //Figures = new List<Model.Figure>();
-            //Figures.Add(new Model.Figure()
-            //{
-            //    X = 10, Y = 10,
-            //    Rect = new Rectangle()
-            //    {
-            //        Height = 10,
-            //        Width = 10,
-            //        Stroke = Brushes.Black,
-            //        StrokeThickness = 1
-            //    },
-            //    Ellipse = new Ellipse()
-            //    {
-            //        Width = 15,
-            //        Height = 15,
-            //        Stroke = Brushes.Black,
-            //        StrokeThickness = 1
-            //    }
-            //});
+            CreateMarks();
+        }
+        void CreateMarks()
+        {
+            for (int i = 1; i < 55; i++)
+            {
+                //XMarks.Add(i)
+                var elem = new TextBlock() { Text = (i * 10).ToString(), Name = "xMark" + i };
+                Canvas.SetTop(elem, i * 10);
+                Canvas.SetLeft(elem, 25);
+                this.canvas.Children.Add(elem);
+
+                elem = new TextBlock() { Text = (i * 10).ToString(), Name = "yMark" + i };
+                Canvas.SetTop(elem, 25);
+                Canvas.SetLeft(elem, i * 10);
+                this.canvas.Children.Add(elem);
+            }
+        }
+        private void Test()
+        {
+
+            pickUpScale();
+
+            //Console.WriteLine("height in cells: " + maxSize);
+        }
+        void pickUpScale()
+        {
+            double maxSize = Figures.Max(f => f.DefaultSize.Width);
+
+            double maxX = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Max(f => f.DefaultX) + maxSize * 0.75);
+            double maxY = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Max(f => f.DefaultY) + maxSize * 0.75);
+            double minX = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Min(f => f.DefaultX) - maxSize * 0.75);
+            double minY = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Min(f => f.DefaultY) - maxSize * 0.75);
+            maxSize = Math.Max(maxX, maxY);
+            maxSize = Math.Max(maxSize, Math.Abs(minX));
+            maxSize = Math.Max(maxSize, Math.Abs(minY));
+
+            int newSize = (int)(CellSize * CurrentScale);
+
+            var cWidth = (int)(this.canvas.ActualWidth / newSize) / 2;
+            var cHeight = (int)(this.canvas.ActualHeight / newSize) / 2;
+            maxSize /= newSize;
+
+            //maxSize /= newSize;
+            while (CurrentScale > 0.1M && maxSize > cHeight && maxSize > cWidth && maxSize != 2)
+            {
+                Console.WriteLine("----------");
+                maxSize = Figures.Max(f => f.DefaultSize.Width);
+                maxX = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Max(f => f.DefaultX) + maxSize * 0.75);
+                maxY = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Max(f => f.DefaultY) + maxSize * 0.75);
+                minX = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Min(f => f.DefaultX) - maxSize * 0.75);
+                minY = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Min(f => f.DefaultY) - maxSize * 0.75);
+
+                maxSize = Math.Max(maxX, maxY);
+                maxSize = Math.Max(maxSize, Math.Abs(minX));
+                maxSize = Math.Max(maxSize, Math.Abs(minY));
+
+                Console.WriteLine("maxSize " + maxSize);
+
+                newSize = (int)(CellSize * CurrentScale);
+
+                cWidth = (int)(this.canvas.ActualWidth / newSize) / 2;
+                cHeight = (int)(this.canvas.ActualHeight / newSize) / 2;
+
+                maxSize /= newSize;
+                Console.WriteLine("maxSize " + maxSize);
+
+                CurrentScale -= 0.1M;
+            }
+
+            Console.WriteLine("scale " + CurrentScale.ToString());
         }
         public void Centre(Size e)
         {
             // new code
             CoordCentre = new Point((int)(e.Width / 2), (int)(e.Height / 2));
             yTextBlockPosition = (int)CoordCentre.X - 10;
+
+            YArrowLeftLine = (int)(CoordCentre.X - 5);
+            YArrowRightLine = (int)(CoordCentre.X + 5);
+
+            XArrowLeftPosLine = (int)(canvas.ActualWidth - 10);
+            XArrowBottomLine = (int)(CoordCentre.Y + 5);
+            XArrowTopLine = (int)(CoordCentre.Y - 5);
+
+            // marks working
+            foreach (UIElement el  in canvas.Children)
+            {
+                if (el is TextBlock && (el as TextBlock).Name.StartsWith("yMark"))
+                {
+                    if ((CoordCentre.Y
+                        - (int)(Int32.Parse((el as TextBlock).Text) * (CellSize / CanvasToGridPointsRatio) * CurrentScale)
+                        - (el as TextBlock).ActualHeight / 2) < 20)
+                    {
+                        el.Visibility = Visibility.Hidden;
+                        continue;
+                    }
+                    else
+                        el.Visibility = Visibility.Visible;
+
+                    if (CurrentScale <= 0.2M)
+                        (el as TextBlock).FontSize = 10;
+                    else
+                        (el as TextBlock).FontSize = 12;
+
+                    Canvas.SetTop(el, CoordCentre.Y
+                        - (int)(Int32.Parse((el as TextBlock).Text) * (CellSize / CanvasToGridPointsRatio) * CurrentScale)
+                        - (el as TextBlock).ActualHeight / 2);
+                    Canvas.SetLeft(el, CoordCentre.X - (el as TextBlock).ActualWidth - 5);
+                }
+                if (el is TextBlock && (el as TextBlock).Name.StartsWith("xMark"))
+                {
+                    if ((CoordCentre.X
+                        + (int)(Int32.Parse((el as TextBlock).Text) * (CellSize / CanvasToGridPointsRatio) * CurrentScale)
+                        - (el as TextBlock).ActualWidth / 2) > canvas.ActualWidth - 30)
+                    {
+                        el.Visibility = Visibility.Hidden;
+                        continue;
+                    }
+                    else
+                        el.Visibility = Visibility.Visible;
+
+                    if (CurrentScale <= 0.2M)
+                        (el as TextBlock).FontSize = 7;
+                    else
+                        (el as TextBlock).FontSize = 12;
+
+                    Canvas.SetLeft(el, CoordCentre.X
+                        + (int)(Int32.Parse((el as TextBlock).Text) * (CellSize / CanvasToGridPointsRatio) * CurrentScale)
+                        - (el as TextBlock).ActualWidth / 2);
+                    Canvas.SetTop(el, CoordCentre.Y + 5);
+                }
+            }
 
             int newSize = (int)(CellSize * CurrentScale);
 
@@ -97,7 +256,7 @@ namespace Lab1.Controls
                 heightOffset += newSize / 2;
             CanvasViewPort = new Rect(
                 new Point(-1 * (newSize / 2) + widthOffset,
-                    - 1 * (newSize / 2) + heightOffset),
+                    -1 * (newSize / 2) + heightOffset),
                 new Size(newSize, newSize));
             BrushGeometry = new Rect(new Point(0, 0), new Size(newSize, newSize));
         }
@@ -110,7 +269,6 @@ namespace Lab1.Controls
                 OnPropertyChanged("yTextBlockPosition");
             }
         }
-        //public Point CoordCentre { get; set; }
         public Point CoordCentre
         {
             get { return (Point)this.GetValue(CoordCentreProperty); }
@@ -223,17 +381,19 @@ namespace Lab1.Controls
         {
             if (f == null)
                 return;
-            f.Rect.Height *= CanvasToGridPointsRatio;
-            f.Rect.Width *= CanvasToGridPointsRatio;
-            Canvas.SetTop(f.Rect, CoordCentre.Y - CanvasToGridPointsRatio * (f.Y));
-            Canvas.SetLeft(f.Rect, (CoordCentre.X + CanvasToGridPointsRatio * f.X));
+            f.Rect.Height *= (double)(CanvasToGridPointsRatio * CurrentScale);
+            f.Rect.Width *= (double)(CanvasToGridPointsRatio * CurrentScale);
+            Canvas.SetTop(f.Rect, CoordCentre.Y - CanvasToGridPointsRatio * (double)(f.Y * CurrentScale));
+            Canvas.SetLeft(f.Rect, (CoordCentre.X + CanvasToGridPointsRatio * (double)(f.X * CurrentScale)));
             canvas.Children.Add(f.Rect);
 
-            f.Ellipse.Height *= CanvasToGridPointsRatio;
-            f.Ellipse.Width *= CanvasToGridPointsRatio;
-            Canvas.SetTop(f.Ellipse, CoordCentre.Y - CanvasToGridPointsRatio * (int)(f.Y * CurrentScale));
-            Canvas.SetLeft(f.Ellipse, CoordCentre.X + CanvasToGridPointsRatio * (int)(f.X * CurrentScale));
+            f.Ellipse.Height *= (double)(CanvasToGridPointsRatio * CurrentScale);
+            f.Ellipse.Width *= (double)(CanvasToGridPointsRatio * CurrentScale);
+            Canvas.SetTop(f.Ellipse, CoordCentre.Y - CanvasToGridPointsRatio * (double)(f.Y * CurrentScale));
+            Canvas.SetLeft(f.Ellipse, CoordCentre.X + CanvasToGridPointsRatio * (double)(f.X * CurrentScale));
             canvas.Children.Add(f.Ellipse);
+
+            Test();
         }
 
         private void ctrl1_Loaded(object sender, RoutedEventArgs e)
