@@ -64,8 +64,10 @@
     <Compile Include="Controls\NumericUpDown.xaml.cs">
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\Commands\DecScaleCommand.cs" />
-    <Compile Include="ViewModel\Commands\IncScaleCommand.cs" />
+    <Compile Include="Model\BrushInfo.cs" />
+    <Compile Include="ViewModel\Commands\AddFigureCommand.cs" />
+    <Compile Include="ViewModel\Commands\EditColorCommand.cs" />
+    <Compile Include="ViewModel\Commands\RemoveFigureCommand.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Page Include="Controls\ColorPicker.xaml">
       <SubType>Designer</SubType>

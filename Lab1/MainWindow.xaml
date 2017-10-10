@@ -80,7 +80,9 @@
                 Margin="11,91,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Content="auto" />
+                Content="auto"
+                IsChecked="True"
+                IsEnabled="False" />
             <controls:NumericUpDown
                 Grid.Column="0"
                 Margin="10,55"
