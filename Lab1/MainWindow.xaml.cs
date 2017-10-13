@@ -96,5 +96,20 @@ namespace Lab1
                 button1.Content = "Edit";
             }
         }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            var nl = Environment.NewLine;
+            var text = "";
+            text += "Created at Lviv Politech State University" + nl;
+            text += "on date 11 october 2017" + nl;
+            text += "-------------------------" + nl;
+            text += "Description: Лабораторна робота №1" + nl;
+            text += "Програма дозволяє розміщувати на площині квадрати за заданими координатами та описані кола навколо них" + nl;
+            text += "-------------------------" + nl;
+            text += "Author: Bogdan Brizhaty" + nl;
+            text += "All rights reserved (c)";
+            System.Windows.Forms.MessageBox.Show(text, "About");
+        }
     }
 }

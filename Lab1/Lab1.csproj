@@ -64,6 +64,7 @@
     <Compile Include="Controls\NumericUpDown.xaml.cs">
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FrameworkElementExt.cs" />
     <Compile Include="Model\BrushInfo.cs" />
     <Compile Include="ViewModel\Commands\AddFigureCommand.cs" />
     <Compile Include="ViewModel\Commands\EditColorCommand.cs" />

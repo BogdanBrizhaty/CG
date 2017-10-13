@@ -22,7 +22,7 @@ namespace Lab1.ViewModel
         private decimal _scale = 1.00M;
         private bool _autoScaling = true;
         private ObservableCollection<Model.Figure> _figures;
-        private int _x1, _x2, _y1, _y2;
+        private int _x1 = 50, _x2 = -10, _y1 = 140, _y2 = 25;
 
         private Model.Figure _selectedFigure = null;
         public Model.Figure SelectedFigure
@@ -171,7 +171,6 @@ namespace Lab1.ViewModel
             set
             {
                 _scale = value;
-                //Console.WriteLine(value);
                 OnPropertyChanged("Scale");
             }
         }

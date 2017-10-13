@@ -38,13 +38,16 @@
         <TextBlock
             Canvas.Top="{Binding ElementName=ctrl1, Path=CoordCentre.Y}"
             Canvas.Right="10"
+            Panel.ZIndex="99"
             Text="X" />
         <TextBlock
             Canvas.Left="{Binding ElementName=ctrl1, Path=yTextBlockPosition}"
+            Panel.ZIndex="100"
             Canvas.Top="10"
             Text="Y" />
         <Line
             Stroke="Black"
+            Panel.ZIndex="101"
             StrokeThickness="1"
             X1="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
             X2="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
@@ -54,6 +57,7 @@
         <Line
             Opacity="0.65"
             Stroke="Black"
+            Panel.ZIndex="102"
             StrokeThickness="2"
             X1="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
             X2="{Binding ElementName=ctrl1, Path=YArrowLeftLine, UpdateSourceTrigger=PropertyChanged}"
@@ -62,6 +66,7 @@
         <Line
             Opacity="0.65"
             Stroke="Black"
+            Panel.ZIndex="103"
             StrokeThickness="2"
             X1="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
             X2="{Binding ElementName=ctrl1, Path=YArrowRightLine, UpdateSourceTrigger=PropertyChanged}"
@@ -70,6 +75,7 @@
 
         <Line
             Stroke="Black"
+            Panel.ZIndex="104"
             StrokeThickness="1"
             X1="0"
             X2="{Binding ElementName=canvas, Path=ActualWidth}"
@@ -77,6 +83,7 @@
             Y2="{Binding ElementName=ctrl1, Path=CoordCentre.Y, UpdateSourceTrigger=PropertyChanged}" />
         <Line
             Opacity="0.65"
+            Panel.ZIndex="105"
             Stroke="Black"
             StrokeThickness="2"
             X1="{Binding ElementName=ctrl1, Path=XArrowLeftPosLine}"
@@ -86,6 +93,7 @@
         <Line
             Opacity="0.65"
             Stroke="Black"
+            Panel.ZIndex="106"
             StrokeThickness="2"
             X1="{Binding ElementName=ctrl1, Path=XArrowLeftPosLine}"
             X2="{Binding ElementName=ctrl1, Path=ActualWidth}"

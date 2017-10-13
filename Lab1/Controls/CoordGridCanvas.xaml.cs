@@ -120,10 +120,12 @@ namespace Lab1.Controls
                 Canvas.SetTop(elem, i * 10);
                 Canvas.SetLeft(elem, 25);
                 this.canvas.Children.Add(elem);
+                elem.BringToFront();
 
                 elem = new TextBlock() { Text = (i * 10).ToString(), Name = "yMark" + i };
                 Canvas.SetTop(elem, 25);
                 Canvas.SetLeft(elem, i * 10);
+                elem.BringToFront();
                 this.canvas.Children.Add(elem);
             }
         }
@@ -343,7 +345,6 @@ namespace Lab1.Controls
                     (item as Ellipse).Width = (int)((decimal)figure.DefaultSize.Width * CanvasToGridPointsRatio * CurrentScale);
                     (item as Ellipse).Height = (int)((decimal)figure.DefaultSize.Height * CanvasToGridPointsRatio * CurrentScale);
                 }
-
                 Canvas.SetTop(item, CoordCentre.Y - CanvasToGridPointsRatio * (double)(figure.Y * CurrentScale));
                 Canvas.SetLeft(item, CoordCentre.X + CanvasToGridPointsRatio * (double)(figure.X * CurrentScale));
             }
@@ -381,6 +382,7 @@ namespace Lab1.Controls
         {
             if (f == null)
                 return;
+
             f.Rect.Height *= (double)(CanvasToGridPointsRatio * CurrentScale);
             f.Rect.Width *= (double)(CanvasToGridPointsRatio * CurrentScale);
             Canvas.SetTop(f.Rect, CoordCentre.Y - CanvasToGridPointsRatio * (double)(f.Y * CurrentScale));
@@ -457,6 +459,7 @@ namespace Lab1.Controls
 
         private void canvas_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            return;
             if (e.Delta > 0)
                 CurrentScale += (CurrentScale + 0.10M <= 2.50M) ? 0.10M : 0;
             if (e.Delta < 0)
