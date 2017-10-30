@@ -45,7 +45,7 @@
                 Grid.Column="1"
                 Margin="5,5"
                 CellSize="{Binding CellSize}"
-                CurrentScale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                CurrentScale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
                 Figures="{Binding Path=Figures, Mode=TwoWay}" />
             <ListView
                 x:Name="figuresListing"
@@ -80,9 +80,8 @@
                 Margin="11,91,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Content="auto"
-                IsChecked="True"
-                IsEnabled="False" />
+                Content="Log enabled"
+                IsChecked="{Binding LogEnabled}" />
             <controls:NumericUpDown
                 Grid.Column="0"
                 Margin="10,55"
@@ -91,7 +90,7 @@
                 HighestValue="5.0"
                 LowestValue="0.0001"
                 Step="{Binding ScalingStep}"
-                Value="{Binding Scale, Mode=TwoWay}" />
+                Value="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 x:Name="textBlock1"
                 Margin="11,110,0,0"
@@ -258,10 +257,12 @@
             <Button
                 x:Name="button2"
                 Width="75"
-                Click="button2_Click"
-                Margin="102,14,0,0"
+                Margin="120,5,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="button2_Click"
                 Content="About" />
         </Grid>
     </Border>

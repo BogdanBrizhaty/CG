@@ -8,7 +8,6 @@
     x:Name="ctrl1"
     d:DesignHeight="300"
     d:DesignWidth="300"
-    Loaded="ctrl1_Loaded"
     mc:Ignorable="d">
 
     <Canvas
@@ -42,12 +41,12 @@
             Text="X" />
         <TextBlock
             Canvas.Left="{Binding ElementName=ctrl1, Path=yTextBlockPosition}"
-            Panel.ZIndex="100"
             Canvas.Top="10"
+            Panel.ZIndex="100"
             Text="Y" />
         <Line
-            Stroke="Black"
             Panel.ZIndex="101"
+            Stroke="Black"
             StrokeThickness="1"
             X1="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
             X2="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
@@ -55,18 +54,18 @@
             Y2="{Binding ElementName=canvas, Path=ActualHeight}" />
 
         <Line
+            Panel.ZIndex="102"
             Opacity="0.65"
             Stroke="Black"
-            Panel.ZIndex="102"
             StrokeThickness="2"
             X1="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
             X2="{Binding ElementName=ctrl1, Path=YArrowLeftLine, UpdateSourceTrigger=PropertyChanged}"
             Y1="0"
             Y2="10" />
         <Line
+            Panel.ZIndex="103"
             Opacity="0.65"
             Stroke="Black"
-            Panel.ZIndex="103"
             StrokeThickness="2"
             X1="{Binding ElementName=ctrl1, Path=CoordCentre.X, UpdateSourceTrigger=PropertyChanged}"
             X2="{Binding ElementName=ctrl1, Path=YArrowRightLine, UpdateSourceTrigger=PropertyChanged}"
@@ -74,16 +73,16 @@
             Y2="10" />
 
         <Line
-            Stroke="Black"
             Panel.ZIndex="104"
+            Stroke="Black"
             StrokeThickness="1"
             X1="0"
             X2="{Binding ElementName=canvas, Path=ActualWidth}"
             Y1="{Binding ElementName=ctrl1, Path=CoordCentre.Y, UpdateSourceTrigger=PropertyChanged}"
             Y2="{Binding ElementName=ctrl1, Path=CoordCentre.Y, UpdateSourceTrigger=PropertyChanged}" />
         <Line
-            Opacity="0.65"
             Panel.ZIndex="105"
+            Opacity="0.65"
             Stroke="Black"
             StrokeThickness="2"
             X1="{Binding ElementName=ctrl1, Path=XArrowLeftPosLine}"
@@ -91,9 +90,9 @@
             Y1="{Binding ElementName=ctrl1, Path=XArrowTopLine, UpdateSourceTrigger=PropertyChanged}"
             Y2="{Binding ElementName=ctrl1, Path=CoordCentre.Y, UpdateSourceTrigger=PropertyChanged}" />
         <Line
+            Panel.ZIndex="106"
             Opacity="0.65"
             Stroke="Black"
-            Panel.ZIndex="106"
             StrokeThickness="2"
             X1="{Binding ElementName=ctrl1, Path=XArrowLeftPosLine}"
             X2="{Binding ElementName=ctrl1, Path=ActualWidth}"

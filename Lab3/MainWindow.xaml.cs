@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -62,9 +63,41 @@ namespace Lab3
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            lin1.RenderTransform = new ScaleTransform(0.8, 1, 50, 50);
-            line2.RenderTransform = new TransformGroup() { Children = new TransformCollection() { new ScaleTransform(0.8, 1, 150, 50), new RotateTransform(45, 150, 50) } };
+            lin1.RenderTransform = new TransformGroup()
+            {
+                Children = new TransformCollection()
+                {
+                    //new ScaleTransform(0.8, 1, 50, 50),
+                    //new TranslateTransform() { X = 50 }
+        }
+            };
+            //line2.RenderTransform = new TransformGroup() { Children = new TransformCollection() { new ScaleTransform(0.8, 1, 150, 50), new RotateTransform(45, 150, 50) } };
+            Duration duration = new Duration(TimeSpan.FromSeconds(1));
+            DoubleAnimation anim = new DoubleAnimation(50, 70, duration);
+            DoubleAnimation anim2 = new DoubleAnimation(50, 70, duration);
+            var stb2 = new SeekStoryboard()
+            {
+                Offset = TimeSpan.FromSeconds(1),
+                 BeginStoryboardName = "stb1"
+            };
+            Storyboard stb = new Storyboard()
+            {
+                Name = "stb1",
+                Children = new TimelineCollection()
+                {
+                    anim,
+                    anim2
+                },
+                SpeedRatio = 2
+            };
 
+            Storyboard.SetTargetProperty(anim, new PropertyPath(Line.X1Property));
+            Storyboard.SetTargetProperty(anim2, new PropertyPath(Line.Y1Property));
+
+            lin1.BeginStoryboard(stb);
+            //lin1.RenderTransform = new TranslateTransform();
+            //lin1.BeginAnimation(Line.X1Property, anim);
+            //lin1.BeginAnimation(Line.Y1Property, anim2);
         }
     }
 }

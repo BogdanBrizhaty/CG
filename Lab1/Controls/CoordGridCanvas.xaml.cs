@@ -98,7 +98,6 @@ namespace Lab1.Controls
             }
         }
 
-        //private int _scale = new Binding
         public CoordGridCanvas()
         {
             InitializeComponent();
@@ -113,10 +112,12 @@ namespace Lab1.Controls
         }
         void CreateMarks()
         {
+            //CurrentScaleChanged += Logger.Log;
+
+            TextBlock elem = null;
             for (int i = 1; i < 55; i++)
             {
-                //XMarks.Add(i)
-                var elem = new TextBlock() { Text = (i * 10).ToString(), Name = "xMark" + i };
+                elem = new TextBlock() { Text = (i * 10).ToString(), Name = "xMark" + i };
                 Canvas.SetTop(elem, i * 10);
                 Canvas.SetLeft(elem, 25);
                 this.canvas.Children.Add(elem);
@@ -128,13 +129,6 @@ namespace Lab1.Controls
                 elem.BringToFront();
                 this.canvas.Children.Add(elem);
             }
-        }
-        private void Test()
-        {
-
-            pickUpScale();
-
-            //Console.WriteLine("height in cells: " + maxSize);
         }
         void pickUpScale()
         {
@@ -154,10 +148,9 @@ namespace Lab1.Controls
             var cHeight = (int)(this.canvas.ActualHeight / newSize) / 2;
             maxSize /= newSize;
 
-            //maxSize /= newSize;
             while (CurrentScale > 0.1M && maxSize > cHeight && maxSize > cWidth && maxSize != 2)
             {
-                Console.WriteLine("----------");
+                //Console.WriteLine("----------");
                 maxSize = Figures.Max(f => f.DefaultSize.Width);
                 maxX = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Max(f => f.DefaultX) + maxSize * 0.75);
                 maxY = (double)CurrentScale * CanvasToGridPointsRatio * (Figures.Max(f => f.DefaultY) + maxSize * 0.75);
@@ -168,7 +161,7 @@ namespace Lab1.Controls
                 maxSize = Math.Max(maxSize, Math.Abs(minX));
                 maxSize = Math.Max(maxSize, Math.Abs(minY));
 
-                Console.WriteLine("maxSize " + maxSize);
+                //Console.WriteLine("maxSize " + maxSize);
 
                 newSize = (int)(CellSize * CurrentScale);
 
@@ -176,16 +169,15 @@ namespace Lab1.Controls
                 cHeight = (int)(this.canvas.ActualHeight / newSize) / 2;
 
                 maxSize /= newSize;
-                Console.WriteLine("maxSize " + maxSize);
+                //Console.WriteLine("maxSize " + maxSize);
 
                 CurrentScale -= 0.1M;
             }
 
-            Console.WriteLine("scale " + CurrentScale.ToString());
+            //Console.WriteLine("scale " + CurrentScale.ToString());
         }
         public void Centre(Size e)
         {
-            // new code
             CoordCentre = new Point((int)(e.Width / 2), (int)(e.Height / 2));
             yTextBlockPosition = (int)CoordCentre.X - 10;
 
@@ -296,7 +288,11 @@ namespace Lab1.Controls
         public decimal CurrentScale
         {
             get { return (decimal)this.GetValue(CurrentScaleProperty); }
-            set { this.SetValue(CurrentScaleProperty, value); }
+            set
+            {
+                var oldScale = (decimal)this.GetValue(CurrentScaleProperty);
+                this.SetValue(CurrentScaleProperty, value);
+            }
         }
         public static readonly DependencyProperty CurrentScaleProperty = DependencyProperty.Register(
           "CurrentScale", typeof(decimal), typeof(CoordGridCanvas),
@@ -322,6 +318,10 @@ namespace Lab1.Controls
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Is using for resizing figures due to Scale changes
+        /// </summary>
+        /// <param name="scale"></param>
         public void Scale(decimal scale)
         {
             Centre(new Size(this.ActualWidth, this.ActualHeight));
@@ -349,7 +349,9 @@ namespace Lab1.Controls
                 Canvas.SetLeft(item, CoordCentre.X + CanvasToGridPointsRatio * (double)(figure.X * CurrentScale));
             }
         }
-
+        /// <summary>
+        /// Moves figures to new positions
+        /// </summary>
         public void Transform(Size newSize, Size oldSize)
         {
             if (Figures == null || Figures.Count == 0)
@@ -364,20 +366,37 @@ namespace Lab1.Controls
                 Canvas.SetLeft(item, CoordCentre.X + CanvasToGridPointsRatio * (double)(figure.X * CurrentScale));
             }
         }
-
+        /// <summary>
+        /// Handler to detect canvas size changes. Centres axes and grid, and calls Transfrom action
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             Centre(e.NewSize);
             Transform(e.NewSize, e.PreviousSize);
         }
+        /// <summary>
+        /// implementation of INotifyPropertyChanged interface
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        /// <summary>
+        /// Event handler that handles the changes in CurrentScale DP and calls rescaling action
+        /// </summary>
         public static void OnScaleChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             (sender as CoordGridCanvas)?.Scale((decimal)e.NewValue);
+            //CurrentScaleChanged?.Invoke(new LogEventArgs(String.Format("{0} - Scale changed from [old] {1} to [new] {2}", DateTime.Now.ToShortTimeString(), e.OldValue, e.NewValue)));
+
         }
+        /// <summary>
+        /// Paint the figure when it's added to Figures collection
+        /// </summary>
+        /// <param name="f" type="Model.Figure">Figure to paint</param>
         void PaintFigure(Model.Figure f)
         {
             if (f == null)
@@ -395,26 +414,44 @@ namespace Lab1.Controls
             Canvas.SetLeft(f.Ellipse, CoordCentre.X + CanvasToGridPointsRatio * (double)(f.X * CurrentScale));
             canvas.Children.Add(f.Ellipse);
 
-            Test();
+            // scale to suitable size
+            pickUpScale();
         }
 
-        private void ctrl1_Loaded(object sender, RoutedEventArgs e)
+        #region KPZ event lab(2)
+        public static event FiguresCollectionChangedEventHandler FiguresCollectionChanged;
+        public delegate void FiguresCollectionChangedEventHandler(LogEventArgs e);
+        public class LogEventArgs : EventArgs
         {
-            //PaintFigure(Figures.LastOrDefault());
+            public string LogMessage { get; protected set; }
+            public LogEventArgs()
+            {
+
+            }
+            public LogEventArgs(string msg)
+            {
+                LogMessage = msg;
+            }
         }
-        public void AddFigure(Model.Figure f)
+        class FiguresCollectionChangedEventArgs : LogEventArgs
         {
-            if (f == null)
-                throw new ArgumentNullException();
-
-            if (Figures == null)
-                Figures = new ObservableCollection<Model.Figure>();
-            // blah blah
-            Figures.Add(f);
-            PaintFigure(f);
-            // paint
+            public NotifyCollectionChangedAction ActionType { get; protected set; }
+            public int NewElementsCount { get; protected set; }
+            public FiguresCollectionChangedEventArgs(NotifyCollectionChangedAction action, int newSize)
+            {
+                ActionType = action;
+                NewElementsCount = newSize;
+                LogMessage = String.Format("{0} - Collection has changed with {1} action, now it containst {2} items", DateTime.Now.ToShortTimeString(), ActionType, NewElementsCount);
+            }
         }
 
+        #endregion
+
+
+        /// <summary>
+        /// Listens to the changes in Figures Collection DP and sets the tracker on new value
+        /// and removes the old one from previous
+        /// </summary>
         private static void OnFiguresCollectionChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue != null)
@@ -422,17 +459,22 @@ namespace Lab1.Controls
                 var @new = e.NewValue as ObservableCollection<Model.Figure>;
                 
                 var old = e.NewValue as ObservableCollection<Model.Figure>;
-                Console.WriteLine(old.Any());
-                Console.WriteLine(e.NewValue.GetType());
+                //Console.WriteLine(old.Any());
+                //Console.WriteLine(e.NewValue.GetType());
             }
+            // tracker
             var action = new NotifyCollectionChangedEventHandler(
                     (o, args) =>
                     {
+
                         var grid = obj as CoordGridCanvas;
 
                         if (grid != null)
                         {
                             var arg = args as NotifyCollectionChangedEventArgs;
+                            // call log event handler
+                            FiguresCollectionChanged?.Invoke(new FiguresCollectionChangedEventArgs(arg.Action, (o as ObservableCollection<Model.Figure>).Count));
+
                             if (arg.NewItems != null && arg.NewItems.Count > 0)
                                 grid.PaintFigure(arg.NewItems[0] as Model.Figure);
                             if (arg.Action == NotifyCollectionChangedAction.Remove)
@@ -443,13 +485,13 @@ namespace Lab1.Controls
                             }
                         }
                     });
-
+            // tracker removing
             if (e.OldValue != null)
             {
                 var coll = (INotifyCollectionChanged)e.OldValue;
                 coll.CollectionChanged -= action;
             }
-
+            // tracker binding
             if (e.NewValue != null)
             {
                 var coll = (ObservableCollection<Model.Figure>)e.NewValue;
@@ -457,9 +499,11 @@ namespace Lab1.Controls
             }
         }
 
+        /// <summary>
+        /// Made wheel-scrolling available
+        /// </summary>
         private void canvas_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            return;
             if (e.Delta > 0)
                 CurrentScale += (CurrentScale + 0.10M <= 2.50M) ? 0.10M : 0;
             if (e.Delta < 0)

@@ -65,6 +65,7 @@
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
     </Compile>
     <Compile Include="FrameworkElementExt.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Model\BrushInfo.cs" />
     <Compile Include="ViewModel\Commands\AddFigureCommand.cs" />
     <Compile Include="ViewModel\Commands\EditColorCommand.cs" />
@@ -90,7 +91,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ColorFactory.cs" />
     <Compile Include="Controls\ColorPicker.xaml.cs">
       <DependentUpon>ColorPicker.xaml</DependentUpon>
     </Compile>

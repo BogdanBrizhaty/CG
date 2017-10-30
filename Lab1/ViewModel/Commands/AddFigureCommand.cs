@@ -33,11 +33,11 @@ namespace Lab1.ViewModel.Commands
 
             double angle = Math.Atan2(y1 - y2, x1 - x2) / Math.PI * 180;
             //angle = (angle < 0) ? angle + 360 : angle;
-            Console.WriteLine(angle - 90);
+            //Console.WriteLine(angle - 90);
             var dist = Math.Round(Math.Sqrt(Math.Pow(y1 - y2, 2) + Math.Pow(x1 - x2, 2)), 3);
-            Console.WriteLine(dist);
+            //Console.WriteLine(dist);
             var axleOffset = (dist * (Math.Sin((angle - 90) / 57.2957795)));//, 0);
-            Console.WriteLine(axleOffset);
+            //Console.WriteLine(axleOffset);
 
             var figure = new Model.Figure()
             {
@@ -68,7 +68,7 @@ namespace Lab1.ViewModel.Commands
             if (axleOffset < 0 && angle != 45)
                 figure.X += (int)axleOffset;
 
-            Console.WriteLine(figure.X + " ; " + figure.Y);
+            //Console.WriteLine(figure.X + " ; " + figure.Y);
 
             figure.Rect.LayoutTransform = new RotateTransform(0 - angle - 90, 0, 0);
             figure.Ellipse.LayoutTransform = new RotateTransform(0 - angle - 90, 0, 0);

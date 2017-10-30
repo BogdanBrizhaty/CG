@@ -1,14 +1,17 @@
-﻿using Lab1.Model;
+﻿using Lab1.Controls;
+using Lab1.Model;
 using Lab1.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using static Lab1.Controls.CoordGridCanvas;
 
 namespace Lab1.ViewModel
 {
@@ -96,7 +99,27 @@ namespace Lab1.ViewModel
         //COMMANDS
         //private ICommand _increaseScaleButtonPressedCommand;
         #endregion
+        private bool _log = false;
+        public bool LogEnabled
+        {
+            get { return _log; }
+            set
+            {
+                if (value)
+                {
+                    CurrentScaleChanged += Logger.Log;
+                    CoordGridCanvas.FiguresCollectionChanged += Logger.Log;
+                }
+                else
+                {
+                    CurrentScaleChanged -= Logger.Log;
+                    CoordGridCanvas.FiguresCollectionChanged -= Logger.Log;
+                }
 
+                _log = value;
+                OnPropertyChanged("LogEnabled");
+            }
+        }
         public MainViewModel()
         {
             Brushes = new List<BrushInfo>()
@@ -116,60 +139,29 @@ namespace Lab1.ViewModel
 
         }
 
+        public static event CurrentScaleChangedEventHandler CurrentScaleChanged;
+        public delegate void CurrentScaleChangedEventHandler(LogEventArgs e);
+
         public ObservableCollection<Model.Figure> Figures
         {
             get { return _figures; }
             set
             {
                 _figures = value;
-                //OnCollectionChanged
                 OnPropertyChanged("Figures");
-            }
-        }
-
-
-
-        private decimal _bindTest = 0.25M;
-        public decimal BindTest
-        {
-            get { return _bindTest; }
-            set
-            {
-                _bindTest = value;
-                Console.WriteLine("property");
-                OnPropertyChanged("BindTest");
             }
         }
 
         #region properties
         public decimal ScalingStep { get { return 0.1M; } }
         public int CellSize { get { return _defaultSize; } }
-        // bindable
-        //public Rect CanvasViewPort
-        //{
-        //    get { return _canvasViewport; }
-        //    set
-        //    {
-        //        _canvasViewport = value;
-        //        OnPropertyChanged("CanvasViewPort");
-        //    }
-        //}
-
-        //public Rect BrushGeometry
-        //{
-        //    get { return _brushGeometry; }
-        //    set
-        //    {
-        //        _brushGeometry = value;
-        //        OnPropertyChanged("BrushGeometry");
-        //    }
-        //}
 
         public decimal Scale
         {
             get { return _scale; }
             set
             {
+                CurrentScaleChanged?.Invoke(new LogEventArgs(String.Format("{0} - Scale changed from [old] {1} to [new] {2}", DateTime.Now.ToShortTimeString(), _scale, value)));
                 _scale = value;
                 OnPropertyChanged("Scale");
             }
