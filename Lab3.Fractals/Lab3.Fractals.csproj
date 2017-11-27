@@ -60,6 +60,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Builder.cs" />
+    <Compile Include="Colors.cs" />
     <Compile Include="Events\EventArgs\CollectionChangedEventArgs.cs" />
     <Compile Include="Events\EventArgs\LogEventArgs.cs" />
     <Compile Include="Logger.cs" />
