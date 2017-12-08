@@ -38,8 +38,11 @@ namespace Lab5
                         _selectedMarker.Stroke = Brushes.Blue;
                 }
                 else
+                {
                     value.Stroke = Brushes.Red;
-                _selectedMarker = value;
+                    lst.SelectedItem = value.DataContext;
+                }
+                    _selectedMarker = value;
             }
         }
         private bool _ellipseMoving = false;
