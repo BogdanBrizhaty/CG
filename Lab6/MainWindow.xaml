@@ -1,0 +1,173 @@
+﻿<Window
+    x:Class="Lab6.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Lab6"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="525"
+    Height="350"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <local:AppDataContext />
+    </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="{x:Type Ellipse}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Canvas
+            x:Name="layout"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="AliceBlue"
+            MouseDown="Grid_MouseDown"
+            MouseMove="Grid_MouseMove"
+            MouseUp="Grid_MouseUp">
+            <Line
+                DataContext="{Binding Side1}"
+                Stroke="{Binding Color}"
+                StrokeThickness="{Binding Thickness}"
+                X1="{Binding StartAt.RenderedX}"
+                X2="{Binding EndAt.RenderedX}"
+                Y1="{Binding StartAt.RenderedY}"
+                Y2="{Binding EndAt.RenderedY}" />
+            <Line
+                DataContext="{Binding Side2}"
+                Stroke="{Binding Color}"
+                StrokeThickness="{Binding Thickness}"
+                X1="{Binding StartAt.RenderedX}"
+                X2="{Binding EndAt.RenderedX}"
+                Y1="{Binding StartAt.RenderedY}"
+                Y2="{Binding EndAt.RenderedY}" />
+            <Line
+                DataContext="{Binding Side3}"
+                Stroke="{Binding Color}"
+                StrokeThickness="{Binding Thickness}"
+                X1="{Binding StartAt.RenderedX}"
+                X2="{Binding EndAt.RenderedX}"
+                Y1="{Binding StartAt.RenderedY}"
+                Y2="{Binding EndAt.RenderedY}" />
+            <Ellipse
+                Canvas.Left="{Binding X}"
+                Canvas.Top="{Binding Y}"
+                Width="{Binding Diameter}"
+                Height="{Binding Diameter}"
+                DataContext="{Binding Side1.StartAt}"
+                MouseDown="Ellipse_MouseDown"
+                MouseUp="Ellipse_MouseUp"
+                Stroke="{Binding Color}"
+                StrokeThickness="{Binding Radius}" />
+            <Ellipse
+                Canvas.Left="{Binding X}"
+                Canvas.Top="{Binding Y}"
+                Width="{Binding Diameter}"
+                Height="{Binding Diameter}"
+                DataContext="{Binding Side2.StartAt}"
+                MouseDown="Ellipse_MouseDown"
+                MouseUp="Ellipse_MouseUp"
+                Stroke="{Binding Color}"
+                StrokeThickness="{Binding Radius}" />
+            <Ellipse
+                Canvas.Left="{Binding X}"
+                Canvas.Top="{Binding Y}"
+                Width="{Binding Diameter}"
+                Height="{Binding Diameter}"
+                DataContext="{Binding Side3.StartAt}"
+                MouseDown="Ellipse_MouseDown"
+                MouseUp="Ellipse_MouseUp"
+                Stroke="{Binding Color}"
+                StrokeThickness="{Binding Radius}" />
+            <Ellipse
+                x:Name="Center"
+                Canvas.Left="{Binding X}"
+                Canvas.Top="{Binding Y}"
+                Width="{Binding Diameter}"
+                Height="{Binding Diameter}"
+                DataContext="{Binding TriangleCenter}"
+                MouseDown="Ellipse_MouseDown"
+                MouseUp="Ellipse_MouseUp"
+                Stroke="{Binding Color}"
+                StrokeThickness="{Binding Radius}" />
+            <Grid
+                Name="paramsPanel"
+                Canvas.Top="35"
+                Canvas.Right="5"
+                Width="212"
+                Height="65"
+                Background="Transparent"
+                Visibility="Collapsed">
+                <TextBlock
+                    x:Name="textBlock"
+                    Width="34"
+                    Margin="0,3,125,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Text="Angle"
+                    TextWrapping="NoWrap" />
+                <TextBlock
+                    x:Name="textBlock2"
+                    Margin="0,30,149,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Text="Scale"
+                    TextWrapping="NoWrap" />
+                <TextBox
+                    x:Name="textBox"
+                    Width="55"
+                    Height="23"
+                    Margin="90,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Text="{Binding Angle}"
+                    TextWrapping="Wrap" />
+                <Button
+                    x:Name="applyAngleBtn"
+                    Width="52"
+                    Margin="150,3,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Click="applyAngleBtn_Click"
+                    Content="Rotate" />
+                <TextBox
+                    x:Name="textBox1"
+                    Width="50"
+                    Height="23"
+                    Margin="67,27,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Text="{Binding Scale}"
+                    TextWrapping="Wrap" />
+                <Button
+                    x:Name="decScaleBtn"
+                    Width="37"
+                    Margin="122,28,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Click="decScaleBtn_Click"
+                    Content="-" />
+                <Button
+                    x:Name="incScaleBtn"
+                    Width="37"
+                    Margin="164,28,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Click="incScaleBtn_Click"
+                    Content="+" />
+            </Grid>
+            <Button
+                x:Name="button"
+                Canvas.Top="10"
+                Canvas.Right="10"
+                Width="75"
+                Click="button_Click"
+                Content="{Binding AppMode}" />
+        </Canvas>
+    </Grid>
+</Window>
